@@ -30,7 +30,7 @@ lisp("""
   :group 'pastebin
   :type 'boolean)
 """)
-     
+
 
 class UnsupportedLanguageException(Exception):
     def __init__(self, language):
@@ -69,14 +69,13 @@ class Pastes(object):
         paste_id = self._proxy.pastes.newPaste(language, code, None,
                                                filename)
         url = 'http://paste.pocoo.org/show/%s' % paste_id
-        
+
         lisp.message('New paste with id %s created. Refer to %s',
                      paste_id, url)
         if lisp.paste_kill_url.value():
             lisp.kill_new(url)
-        ## if lisp.paste_show_in_browser.value():
-        ##     lisp.message('Would invoke http://paste.pocoo.org/show/%s in '
-        ##                  'webbrowser', paste_id)
+        if lisp.paste_show_in_browser.value():
+            lisp.browse_url(url)
         return paste_id
 
     def get_paste(self, paste_id):
@@ -175,7 +174,7 @@ def new_from_region(start, end, language):
     filename = lisp.buffer_file_name()
     paste_bin.new_paste(code, language, filename)
 new_from_region.interaction = get_new_from_region_args
-        
+
 def new_from_buffer(buffer, language):
     """Pastes the contents of buffer"""
     lisp.set_buffer(buffer)
