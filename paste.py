@@ -14,6 +14,24 @@ from Pymacs import lisp
 from xmlrpclib import ServerProxy
 
 
+lisp("""
+(defgroup pastebin nil
+  "Access to the pastebin on paste.pocoo.org"
+  :group 'convenience)
+
+(defcustom paste-kill-url nil
+  "*If non-nil, put the url of a new paste into kill ring"
+  :group 'pastebin
+  :type 'boolean)
+
+(defcustom paste-show-in-browser nil
+  "*If non-nil, invoke the browser with the paste url after
+  pasting a new snippet"
+  :group 'pastebin
+  :type 'boolean)
+""")
+     
+
 class UnsupportedLanguageException(Exception):
     def __init__(self, language):
         self.language = language
@@ -50,10 +68,15 @@ class Pastes(object):
         lisp.message('Transferring paste to server...')
         paste_id = self._proxy.pastes.newPaste(language, code, None,
                                                filename)
+        url = 'http://paste.pocoo.org/show/%s' % paste_id
         
-        lisp.message('New paste with id %s created. '
-                     'Refer to http://paste.pocoo.org/show/%s',
-                     paste_id, paste_id)
+        lisp.message('New paste with id %s created. Refer to %s',
+                     paste_id, url)
+        if lisp.paste_kill_url.value():
+            lisp.kill_new(url)
+        ## if lisp.paste_show_in_browser.value():
+        ##     lisp.message('Would invoke http://paste.pocoo.org/show/%s in '
+        ##                  'webbrowser', paste_id)
         return paste_id
 
     def get_paste(self, paste_id):
@@ -76,10 +99,9 @@ def read_language():
     # guess language from major mode
     major_mode = lisp.major_mode.value().text
     def_language = major_mode[:-5]
-    if def_language in paste_bin.languages:
-        msg = 'Language of paste snippet (%s): ' % def_language
-    else:
-        msg = 'Language of paste snippet: '
+    if def_language not in paste_bin.languages:
+        def_language = 'text'
+    msg = 'Language of paste snippet (%s): ' % def_language
     language = (lisp.completing_read(msg, paste_bin.languages).strip() or
                 def_language)
 
