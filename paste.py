@@ -62,7 +62,7 @@ class Pastes(object):
             language = None
             lisp.message('No language given. The server will guess the '
                          'language from buffer filename')
-        if language not in self.languages:
+        elif language not in self.languages:
             raise UnsupportedLanguageException()
 
         lisp.message('Transferring paste to server...')
