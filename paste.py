@@ -10,10 +10,20 @@
 # http://sam.zoy.org/wtfpl/COPYING for more details.
 
 
+# TODO: add proper error handling to avoid exception tracebacks
+# TODO: provide customisation to map pastebin languages to major modes
+
+
 from Pymacs import lisp
 from xmlrpclib import ServerProxy
 
 
+# necessary reference to easymenu
+lisp.require(lisp['easymenu'])
+
+
+# customisation group
+# XXX: maybe this could somehow be written in python
 lisp("""
 (defgroup pastebin nil
   "Access to the pastebin on paste.pocoo.org"
@@ -41,7 +51,7 @@ class UnsupportedLanguageException(Exception):
 
 
 class Pastes(object):
-    """Represents the pocoo paste bin"""
+    """Wrapper around the XML-RPC service of paste.pocoo.org"""
     def __init__(self):
         self._languages = None
         self._proxy = ServerProxy('http://paste.pocoo.org/xmlrpc',
@@ -63,7 +73,7 @@ class Pastes(object):
             lisp.message('No language given. The server will guess the '
                          'language from buffer filename')
         elif language not in self.languages:
-            raise UnsupportedLanguageException()
+            raise UnsupportedLanguageException(language)
 
         lisp.message('Transferring paste to server...')
         paste_id = self._proxy.pastes.newPaste(language, code, None,
@@ -94,7 +104,8 @@ paste_bin = Pastes()
 ## NON-INTERACTIVE FUNCTIONS
 # interactive argument completion
 def read_language():
-    """Reads a language from minibuffer with completion"""
+    """Reads a paste language from minibuffer. Provides completion based on
+    the list ov available languages"""
     # guess language from major mode
     major_mode = lisp.major_mode.value().text
     def_language = major_mode[:-5]
@@ -110,13 +121,15 @@ def read_language():
     return language
 
 def get_new_from_region_args():
-    """Gets args for new_from_region"""
+    """Gets args for new_from_region:
+    The language and the currently active region"""
     lang = read_language()
     start, end = lisp.region_beginning(), lisp.region_end()
     return [start, end, lang]
 
 def get_new_from_buffer_args():
-    """Gets args for new_from_buffer"""
+    """Gets args for new_from_buffer:
+    The paste language"""
     buff = lisp.read_buffer('Buffer to paste: ',
                             lisp.current_buffer(), True)
     lang = read_language()
@@ -130,6 +143,7 @@ def new_buffer_from_paste(paste):
     lisp.insert(paste['code'])
     # simple guessing of the buffer mode
     # XXX: is there a better way?
+    # FIXME: do at least a bit of error handling and check, if there is such a mode
     mode = lisp['%(language)s-mode' % paste]
     mode()
 
@@ -180,7 +194,7 @@ def new_from_buffer(buffer, language):
     lisp.set_buffer(buffer)
     # XXX: this freezes emacs on larger buffers like one containing this file
     # code = lisp.buffer_string()
-    # strangely enough this works, however
+    # however, strangely enough this works
     code = lisp.buffer_substring(lisp.point_min(), lisp.point_max())
     filename = lisp.buffer_file_name()
     paste_bin.new_paste(code, language, filename)
@@ -188,16 +202,17 @@ new_from_buffer.interaction = get_new_from_buffer_args
 
 
 def menu():
+    """Creates a global menu to access the pastebin functionality"""
     lisp.easy_menu_add_item(
         lisp.current_global_map(),
         ['menu-bar'],
-        ["Pastebin",
-         ("Fetch last", lisp.paste_fetch_last),
-         ("Insert last", lisp.paste_insert_last),
-         ("Fetch by id", lisp.paste_fetch_by_id),
-         ("Insert by id", lisp.paste_insert_by_id),
-         "---",
-         ("New from buffer", lisp.paste_new_from_buffer),
-         ("New from region", lisp.paste_new_from_region)
+        ['Pastebin',
+         ('Fetch last', lisp.paste_fetch_last),
+         ('Insert last', lisp.paste_insert_last),
+         ('Fetch by id', lisp.paste_fetch_by_id),
+         ('Insert by id', lisp.paste_insert_by_id),
+         '---',
+         ('New from buffer', lisp.paste_new_from_buffer),
+         ('New from region', lisp.paste_new_from_region)
          ])
 menu.interaction = ''
