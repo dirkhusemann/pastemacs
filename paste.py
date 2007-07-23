@@ -26,8 +26,9 @@ from Pymacs import lisp
 from xmlrpclib import ServerProxy
 
 
-# necessary reference to easymenu
+# necessary references
 lisp.require(lisp['easymenu'])
+lisp.require(lisp['browse-url'])
 
 
 # customisation group
