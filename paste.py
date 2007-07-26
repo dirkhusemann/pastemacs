@@ -63,7 +63,7 @@ class Pastes(object):
     """Wrapper around the XML-RPC service of paste.pocoo.org"""
     def __init__(self):
         self._languages = None
-        self._proxy = ServerProxy('http://paste.pocoo.org/xmlrpc',
+        self._proxy = ServerProxy('http://paste.pocoo.org/xmlrpc/',
                                   allow_none=True)
 
     @property
