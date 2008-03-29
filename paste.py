@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # allows pasting the current buffer on paste.pocoo.org
-# Copyright (c) 2007 Sebastian Wiesner <basti.wiesner@gmx.net>
+# Copyright (c) 2007, 2008 Sebastian Wiesner <basti.wiesner@gmx.net>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,12 +18,28 @@
 # Boston, MA 02111-1307, USA.
 
 
+"""
+    paste
+    =====
+
+    This pymacs module provides a handful of function for convenient access
+    to the pastebin at `http://paste.pocoo.org`.
+
+
+    :copyright: 2008 by Sebastian Wiesner
+    :license: GPL-2
+"""
+
+
 # TODO: add proper error handling to avoid exception tracebacks
 # TODO: provide customisation to map pastebin languages to major modes
 
 
-from Pymacs import lisp
 from xmlrpclib import ServerProxy
+
+from Pymacs import lisp
+
+from lodgeitlib import lodgeit
 
 
 # necessary references
@@ -51,63 +67,25 @@ lisp("""
 """)
 
 
-class UnsupportedLanguageException(Exception):
-    def __init__(self, language):
-        self.language = language
-
-    def __str__(self):
-        return 'Unsupported language: %s' % self.language
-
-
-class Pastes(object):
-    """Wrapper around the XML-RPC service of paste.pocoo.org"""
-    def __init__(self):
-        self._languages = None
-        self._proxy = ServerProxy('http://paste.pocoo.org/xmlrpc/',
-                                  allow_none=True)
-
-    @property
-    def languages(self):
-        """Returns a list of supported languages"""
-        if not self._languages:
-            lisp.message('Fetching list of supported languages from server')
-            langs = self._proxy.pastes.getLanguages()
-            self._languages = list(zip(*langs)[0])
-        return self._languages
-
-    def new_paste(self, code, language, filename):
-        """Creates a new paste from `code` with `language`"""
-        if not language:
-            language = None
-            lisp.message('No language given. The server will guess the '
-                         'language from buffer filename')
-        elif language not in self.languages:
-            raise UnsupportedLanguageException(language)
-
-        lisp.message('Transferring paste to server...')
-        paste_id = self._proxy.pastes.newPaste(language, code, None,
-                                               filename)
-        url = 'http://paste.pocoo.org/show/%s' % paste_id
-
-        lisp.message('New paste with id %s created. Refer to %s',
-                     paste_id, url)
-        if lisp.paste_kill_url.value():
-            lisp.kill_new(url)
-        if lisp.paste_show_in_browser.value():
-            lisp.browse_url(url)
-        return paste_id
-
-    def get_paste(self, paste_id):
-        """Returns the paste with `paste_id`"""
-        return self._proxy.pastes.getPaste(paste_id)
-
-    def get_last_paste(self):
-        """Returns the last paste"""
-        return self._proxy.pastes.getLast()
+## lodgeit wrappers which add some messaging
+def new_paste(code, language, filename):
+    """Creates a new paste."""
+    lisp.message('Transferring paste to server...')
+    id = lodgeit.new_paste(code, language, filename=filename)
+    paste = lodgeit.get_paste_by_id(id)
+    lisp.message('New paste with id %s created. Refer to %s',
+                 paste.id, paste.url)
+    if lisp.paste_kill_url.value():
+        lisp.kill_new(paste.url)
+    if lisp.paste_show_in_browser.value():
+        lisp.browse_url(paste.url)
 
 
-# global paste bin object
-paste_bin = Pastes()
+def languages():
+    """Returns a list of supported languages."""
+    if not lodgeit.has_languages:
+        lisp.message('Fetching list of supported languages from server')
+    return lodgeit.languages.keys()
 
 
 ## NON-INTERACTIVE FUNCTIONS
@@ -118,16 +96,13 @@ def read_language():
     # guess language from major mode
     major_mode = lisp.major_mode.value().text
     def_language = major_mode[:-5]
-    if def_language not in paste_bin.languages:
+    if def_language not in languages():
         def_language = 'text'
     msg = 'Language of paste snippet (%s): ' % def_language
-    language = (lisp.completing_read(msg, paste_bin.languages).strip() or
-                def_language)
-
-    if language not in paste_bin.languages:
-        raise UnsupportedLanguageException(language)
-
+    language = (lisp.completing_read(msg, languages()).strip()
+                or def_language)
     return language
+
 
 def get_new_from_region_args():
     """Gets args for new_from_region:
@@ -135,6 +110,7 @@ def get_new_from_region_args():
     lang = read_language()
     start, end = lisp.region_beginning(), lisp.region_end()
     return [start, end, lang]
+
 
 def get_new_from_buffer_args():
     """Gets args for new_from_buffer:
@@ -147,13 +123,13 @@ def get_new_from_buffer_args():
 
 def new_buffer_from_paste(paste):
     """Creates a new buffer from `paste`"""
-    lisp.switch_to_buffer('paste %(paste_id)s' % paste)
+    lisp.switch_to_buffer('paste %s' % paste.id)
     lisp.erase_buffer()
-    lisp.insert(paste['code'])
+    lisp.insert(paste.code)
     # simple guessing of the buffer mode
     # XXX: is there a better way?
     # FIXME: do at least a bit of error handling and check, if there is such a mode
-    mode = lisp['%(language)s-mode' % paste]
+    mode = lisp['%s-mode' % paste.language]
     mode()
 
 
@@ -161,52 +137,53 @@ def new_buffer_from_paste(paste):
 # to fetch pastes
 def fetch_by_id(paste_id):
     """Fetches paste with `paste_id` and inserts it into a new buffer"""
-    paste = paste_bin.get_paste(paste_id)
+    paste = lodgeit.get_paste_by_id(paste_id)
     if paste:
         new_buffer_from_paste(paste)
     else:
         lisp.error('There is no paste with id %s', paste_id)
 fetch_by_id.interaction = ('nThe paste id: ')
 
+
 def insert_by_id(paste_id):
     """Fetches paste with `paste_id` and inserts it into current buffer"""
-    paste = paste_bin.get_paste(paste_id)
+    paste = lodgeit.get_paste_by_id(paste_id)
     if paste:
-        lisp.insert(paste['code'])
+        lisp.insert(paste.code)
     else:
         lisp.error('There is no paste with id %s', paste_id)
 insert_by_id.interaction = ('*nThe paste id: ')
 
+
 def fetch_last():
     """Fetches last paste and inserts it into a new buffer"""
-    paste = paste_bin.get_last_paste()
+    paste = lodgeit.get_last_paste()
     new_buffer_from_paste(paste)
 fetch_last.interaction = ''
 
+
 def insert_last():
     """Inserts the last paste into current buffer"""
-    paste = paste_bin.get_last_paste()
-    lisp.insert(paste['code'])
+    paste = lodgeit.get_last_paste()
+    lisp.insert(paste.code)
 insert_last.interaction = '*'
 
 
 # to create new pastes
 def new_from_region(start, end, language):
     """Pastes the current selection"""
-    code = lisp.buffer_substring(start, end)
+    code = unicode(lisp.buffer_substring(start, end))
     filename = lisp.buffer_file_name()
-    paste_bin.new_paste(code, language, filename)
+    new_paste(code, language, filename=filename)
 new_from_region.interaction = get_new_from_region_args
 
 def new_from_buffer(buffer, language):
     """Pastes the contents of buffer"""
     lisp.set_buffer(buffer)
-    # XXX: this freezes emacs on larger buffers like one containing this file
-    # code = lisp.buffer_string()
-    # however, strangely enough this works
-    code = lisp.buffer_substring(lisp.point_min(), lisp.point_max())
+    code = unicode(lisp.buffer_string())
+    #code = lisp.buffer_substring(lisp.point_min(), lisp.point_max())
     filename = lisp.buffer_file_name()
-    paste_bin.new_paste(code, language, filename)
+    new_paste(code, language, filename=filename)
 new_from_buffer.interaction = get_new_from_buffer_args
 
 
