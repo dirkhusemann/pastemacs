@@ -24,7 +24,7 @@ from setuptools import setup
 
 setup(
     name='pastemacs',
-    version='0.1',
+    version='0.1.1',
     url='http://pypi.python.org/pypi/pastemacs',
     author='Sebastian Wiesner',
     author_email='basti.wiesner@gmx.net',
