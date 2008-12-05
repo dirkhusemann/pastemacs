@@ -73,8 +73,8 @@ def new_paste(code, language, filename):
     lisp.message('Transferring paste to server...')
     id = lodgeit.new_paste(code, language, filename=filename)
     paste = lodgeit.get_paste_by_id(id)
-    lisp.message('New paste with id %s created. Refer to %s',
-                 paste.id, paste.url)
+    lisp.message(
+        'New paste with id {0.id} created. Refer to {0.url}'.format(paste))
     if lisp.paste_kill_url.value():
         lisp.kill_new(paste.url)
     if lisp.paste_show_in_browser.value():
@@ -98,7 +98,7 @@ def read_language():
     def_language = major_mode[:-5]
     if def_language not in languages():
         def_language = 'text'
-    msg = 'Language of paste snippet (%s): ' % def_language
+    msg = 'Language of paste snippet ({0}): '.format(def_language)
     language = (lisp.completing_read(msg, languages()).strip()
                 or def_language)
     return language
@@ -123,13 +123,13 @@ def get_new_from_buffer_args():
 
 def new_buffer_from_paste(paste):
     """Creates a new buffer from `paste`"""
-    lisp.switch_to_buffer('paste %s' % paste.id)
+    lisp.switch_to_buffer('paste {0.id}'.format(paste))
     lisp.erase_buffer()
     lisp.insert(paste.code)
     # simple guessing of the buffer mode
     # XXX: is there a better way?
     # FIXME: do at least a bit of error handling and check, if there is such a mode
-    mode = lisp['%s-mode' % paste.language]
+    mode = lisp['{0.language}-mode'.format(paste)]
     mode()
 
 
@@ -141,7 +141,7 @@ def fetch_by_id(paste_id):
     if paste:
         new_buffer_from_paste(paste)
     else:
-        lisp.error('There is no paste with id %s', paste_id)
+        lisp.error('There is no paste with id'.format(paste_id))
 fetch_by_id.interaction = ('nThe paste id: ')
 
 
@@ -151,7 +151,7 @@ def insert_by_id(paste_id):
     if paste:
         lisp.insert(paste.code)
     else:
-        lisp.error('There is no paste with id %s', paste_id)
+        lisp.error('There is no paste with id {0}'.format(paste_id))
 insert_by_id.interaction = ('*nThe paste id: ')
 
 
