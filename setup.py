@@ -42,7 +42,7 @@ setup(
         ],
     zip_safe=True,
     # to get our sdist ready without any silly manifest
-    setup_requires=['setuptools-git>=0.3.1'],
+    setup_requires=['hg.setuptools>=0.2'],
     py_modules=['pastemacs'],
     install_requires=['lodgeitlib'],
     entry_points={
