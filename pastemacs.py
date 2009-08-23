@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # allows pasting the current buffer on paste.pocoo.org
-# Copyright (c) 2007, 2008 Sebastian Wiesner <basti.wiesner@gmx.net>
+# Copyright (c) 2007, 2008, 2009 Sebastian Wiesner <basti.wiesner@gmx.net>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@
 # TODO: add proper error handling to avoid exception tracebacks
 # TODO: provide customisation to map pastebin languages to major modes
 
-
-from xmlrpclib import ServerProxy
 
 from Pymacs import lisp
 
