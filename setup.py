@@ -17,15 +17,13 @@ To enable the menu, add the following line after the above::
 """
 
 
-import ez_setup
-ez_setup.use_setuptools()
 from setuptools import setup
 
 
 setup(
     name='pastemacs',
     version='0.1.1',
-    url='http://pypi.python.org/pypi/pastemacs',
+    url='http://www.lunaryorn.de/code/pastemacs.html',
     author='Sebastian Wiesner',
     author_email='basti.wiesner@gmx.net',
     description='Lodgeit integration for emacs',
@@ -42,9 +40,7 @@ setup(
         ],
     zip_safe=True,
     # to get our sdist ready without any silly manifest
-    setup_requires=['hg.setuptools>=0.2'],
+    setup_requires=['setuptools-hg'],
     py_modules=['pastemacs'],
     install_requires=['lodgeitlib'],
-    entry_points={
-        'console_scripts': ['lodgeit = lodgeitclient:main [client]']}
     )
