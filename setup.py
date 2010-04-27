@@ -25,7 +25,7 @@ setup(
     version='0.1.1',
     url='http://www.lunaryorn.de/code/pastemacs.html',
     author='Sebastian Wiesner',
-    author_email='basti.wiesner@gmx.net',
+    author_email='lunaryorn@googlemail.com',
     description='Lodgeit integration for emacs',
     long_description=__doc__,
     license='GPL',
