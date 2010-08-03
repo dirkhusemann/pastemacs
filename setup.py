@@ -22,7 +22,7 @@ from setuptools import setup
 
 setup(
     name='pastemacs',
-    version='0.1.1',
+    version='0.1.2',
     url='http://www.lunaryorn.de/code/pastemacs.html',
     author='Sebastian Wiesner',
     author_email='lunaryorn@googlemail.com',
