@@ -38,8 +38,6 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Text Editors :: Emacs'
         ],
-    # to get our sdist ready without any silly manifest
-    setup_requires=['setuptools-hg'],
     py_modules=['pastemacs'],
     install_requires=['lodgeitlib'],
     )
