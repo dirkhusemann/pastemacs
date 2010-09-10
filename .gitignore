@@ -1,3 +1,4 @@
 *.pyc
 pastemacs.egg-info/*
 dist/*
+.ropeproject/*
