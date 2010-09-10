@@ -29,10 +29,6 @@
 """
 
 
-# TODO: add proper error handling to avoid exception tracebacks
-# TODO: provide customisation to map pastebin languages to major modes
-
-
 from Pymacs import lisp
 
 from lodgeitlib import lodgeit
@@ -44,7 +40,6 @@ lisp.require(lisp['browse-url'])
 
 
 # customisation group
-# XXX: maybe this could somehow be written in python
 lisp("""
 (defgroup pastebin nil
   "Access to the pastebin on paste.pocoo.org"
@@ -123,8 +118,6 @@ def new_buffer_from_paste(paste):
     lisp.erase_buffer()
     lisp.insert(paste.code)
     # simple guessing of the buffer mode
-    # XXX: is there a better way?
-    # FIXME: do at least a bit of error handling and check, if there is such a mode
     mode = lisp['{0.language}-mode'.format(paste)]
     mode()
 
