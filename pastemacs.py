@@ -65,8 +65,6 @@ def languages():
     return lodgeit.languages.keys()
 
 
-## NON-INTERACTIVE FUNCTIONS
-# interactive argument completion
 def read_language():
     """Reads a paste language from minibuffer. Provides completion based on
     the list ov available languages"""
@@ -91,8 +89,6 @@ def new_buffer_from_paste(paste):
     mode()
 
 
-## INTERACTIVE FUNCTIONS
-# to fetch pastes
 def fetch_by_id(paste_id):
     """Fetches paste with `paste_id` and inserts it into a new buffer"""
     paste = lodgeit.get_paste_by_id(paste_id)
