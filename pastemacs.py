@@ -170,7 +170,6 @@ def new_from_buffer(buffer, language):
     """Pastes the contents of buffer"""
     lisp.set_buffer(buffer)
     code = unicode(lisp.buffer_string())
-    #code = lisp.buffer_substring(lisp.point_min(), lisp.point_max())
     filename = lisp.buffer_file_name()
     new_paste(code, language, filename=filename)
 new_from_buffer.interaction = get_new_from_buffer_args
