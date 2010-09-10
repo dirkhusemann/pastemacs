@@ -1,5 +1,5 @@
-0.2 (in development)
-====================
+0.2 (Sep 10, 2010)
+==================
 
 - Merged ``paste-new-from-buffer`` and ``paste-new-from-region`` into a new,
   more convenient ``paste-new`` function.
