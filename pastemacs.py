@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # allows pasting the current buffer on paste.pocoo.org
-# Copyright (c) 2007, 2008, 2009 Sebastian Wiesner <lunaryorn@googlemail.com>
+# Copyright (c) 2007-2010 Sebastian Wiesner <lunaryorn@googlemail.com>
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,15 +19,13 @@
 
 
 """
-    paste
-    =====
+    pastemacs
+    =========
 
     This pymacs module provides a handful of function for convenient access
     to the pastebin at `http://paste.pocoo.org`.
 
-
-    :copyright: 2008 by Sebastian Wiesner
-    :license: GPL-2
+    .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
 
 
