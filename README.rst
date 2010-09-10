@@ -98,16 +98,12 @@ Both variables are available in customization.
 Retrieving pastes
 -----------------
 
-pastemacs can either retrieve the last paste, or a paste from a given id or
-url:
+To retrieve a paste, use ``paste-fetch``.  It fetches a paste and inserts
+its contents at the point in the current buffer.
 
-- ``paste-fetch-by-id``
-- ``paste-insert-by-id``
-- ``paste-fetch-last``
-- ``paste-insert-last``
-
-The ``insert`` functions insert the paste at the current point, while the
-``fetch`` functions retrieve the paste into a new buffer.
+The commands prompts for a paste id, allowing either empty input or a
+nummeric paste id.  Empty input stands for the last paste, a nummeric input
+for the paste with the given id.
 
 
 Configuration

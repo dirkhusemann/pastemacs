@@ -3,6 +3,11 @@
 
 - Merged ``paste-new-from-buffer`` and ``paste-new-from-region`` into a new,
   more convenient ``paste-new`` function.
+- Removed ``paste-fetch-*`` functions.  There is no longer any function,
+  which automatically creates a new buffer for a paste.  Do this for
+  yourself, if required.
+- Merged ``paste-insert-last`` and ``paste-insert-by-id`` into
+  ``paste-fetch``.
 
 
 0.1.2 (Aug 03, 2010)

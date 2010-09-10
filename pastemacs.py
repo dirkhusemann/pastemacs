@@ -79,48 +79,42 @@ def read_language():
     return language
 
 
-def new_buffer_from_paste(paste):
-    """Creates a new buffer from `paste`"""
-    lisp.switch_to_buffer('paste {0.id}'.format(paste))
-    lisp.erase_buffer()
-    lisp.insert(paste.code)
-    # simple guessing of the buffer mode
-    mode = lisp['{0.language}-mode'.format(paste)]
-    mode()
+def read_paste_id():
+    """
+    Read and return a paste id from the minibuffer.
+
+    A paste id is either an empty string, which stands for the last paste,
+    or a number.
+    """
+    while True:
+        paste_id = lisp.read_no_blanks_input(
+            'A paste id [default: last paste]: ')
+        if not paste_id or paste_id.isdigit():
+            return paste_id
+        else:
+            lisp.error('Please enter a number or '
+                       'leave the minibuffer empty')
 
 
-def fetch_by_id(paste_id):
-    """Fetches paste with `paste_id` and inserts it into a new buffer"""
-    paste = lodgeit.get_paste_by_id(paste_id)
-    if paste:
-        new_buffer_from_paste(paste)
+def fetch(paste_id=None):
+    """
+    Fetch a paste and insert its content at point.
+
+    If ``paste_id`` is given, fetch the paste with the given id, otherwise
+    fetch the last paste.
+
+    When called interactively, prompt for a paste id.  Empty input stands
+    for the last paste, and numeric input for the paste with the given id.
+    """
+    if paste_id:
+        paste = lodgeit.get_paste_by_id(paste_id)
     else:
-        lisp.error('There is no paste with id'.format(paste_id))
-fetch_by_id.interaction = ('nThe paste id: ')
-
-
-def insert_by_id(paste_id):
-    """Fetches paste with `paste_id` and inserts it into current buffer"""
-    paste = lodgeit.get_paste_by_id(paste_id)
+        paste = lodgeit.get_last_paste()
     if paste:
         lisp.insert(paste.code)
     else:
         lisp.error('There is no paste with id {0}'.format(paste_id))
-insert_by_id.interaction = ('*nThe paste id: ')
-
-
-def fetch_last():
-    """Fetches last paste and inserts it into a new buffer"""
-    paste = lodgeit.get_last_paste()
-    new_buffer_from_paste(paste)
-fetch_last.interaction = ''
-
-
-def insert_last():
-    """Inserts the last paste into current buffer"""
-    paste = lodgeit.get_last_paste()
-    lisp.insert(paste.code)
-insert_last.interaction = '*'
+fetch.interaction = lambda: [read_paste_id()]
 
 
 def new(language, region_start=None, region_end=None):
@@ -171,10 +165,7 @@ def menu():
         lisp.current_global_map(),
         ['menu-bar'],
         ['Pastebin',
-         ('Fetch last', lisp.paste_fetch_last),
-         ('Insert last', lisp.paste_insert_last),
-         ('Fetch by id', lisp.paste_fetch_by_id),
-         ('Insert by id', lisp.paste_insert_by_id),
+         ('Fetch...', lisp.paste_fetch),
          '---',
          ('New...', lisp.paste_new),
          ])
