@@ -65,17 +65,14 @@ so if you want some, you have to register them for yourself (e.g. by using
 Creating pastes
 ---------------
 
-There are two commands to create pastes:
+The command ``paste-new`` creates a new paste.  If transient mark mode is
+enabled and the mark is active, it pastes the contents of the region,
+otherwise it pastes the complete buffer contents.
 
-- ``paste-new-from-buffer`` prompts for a buffer and creates a new paste
-  with the complete contents of the buffer.
-- ``paste-new-from-region`` creates a new paste from the contents of the
-  current region.
-
-Both commmands additionally prompt for a (programming) language, in which
-the paste is written.  This is used for syntax highlighting in the pastebin
-web interface.  The list of available languages is fetched from the server,
-once you create your first paste, and available as completion list for the
+The command prompts for a (programming) language, in which the paste is
+written.  This is used for syntax highlighting in the pastebin web
+interface.  The list of available languages is fetched from the server, once
+you create your first paste, and available as completion list for the
 language prompt.  You cannot enter a language, which isn't supported, so if
 the language isn't available, choose the default "text".
 

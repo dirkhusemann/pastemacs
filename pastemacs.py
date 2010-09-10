@@ -58,20 +58,6 @@ lisp("""
 """)
 
 
-## lodgeit wrappers which add some messaging
-def new_paste(code, language, filename):
-    """Creates a new paste."""
-    lisp.message('Transferring paste to server...')
-    id = lodgeit.new_paste(code, language, filename=filename)
-    paste = lodgeit.get_paste_by_id(id)
-    lisp.message(
-        'New paste with id {0.id} created. Refer to {0.url}'.format(paste))
-    if lisp.paste_kill_url.value():
-        lisp.kill_new(paste.url)
-    if lisp.paste_show_in_browser.value():
-        lisp.browse_url(paste.url)
-
-
 def languages():
     """Returns a list of supported languages."""
     if not lodgeit.has_languages:
@@ -93,23 +79,6 @@ def read_language():
     language = (lisp.completing_read(msg, languages()).strip()
                 or def_language)
     return language
-
-
-def get_new_from_region_args():
-    """Gets args for new_from_region:
-    The language and the currently active region"""
-    lang = read_language()
-    start, end = lisp.region_beginning(), lisp.region_end()
-    return [start, end, lang]
-
-
-def get_new_from_buffer_args():
-    """Gets args for new_from_buffer:
-    The paste language"""
-    buff = lisp.read_buffer('Buffer to paste: ',
-                            lisp.current_buffer(), True)
-    lang = read_language()
-    return [buff, lang]
 
 
 def new_buffer_from_paste(paste):
@@ -158,21 +127,46 @@ def insert_last():
 insert_last.interaction = '*'
 
 
-# to create new pastes
-def new_from_region(start, end, language):
-    """Pastes the current selection"""
-    code = unicode(lisp.buffer_substring(start, end))
-    filename = lisp.buffer_file_name()
-    new_paste(code, language, filename=filename)
-new_from_region.interaction = get_new_from_region_args
+def new(language, region_start=None, region_end=None):
+    """
+    Create a new paste.  Use the given (programming) ``language`` for server
+    side highlighting.
 
-def new_from_buffer(buffer, language):
-    """Pastes the contents of buffer"""
-    lisp.set_buffer(buffer)
-    code = unicode(lisp.buffer_string())
+    If ``region_start`` and ``region_end`` are given, create a paste with
+    the contents of this region.
+
+    When called interactively with transient mark mode enabled and an active
+    mark, create a paste with the contents of the region.  Otherwise create
+    a paste with the contents of the whole buffer.
+    """
+    mark_active = lisp.mark_active.value()
+    transient_mark_mode = lisp.transient_mark_mode.value()
+    if lisp.interactive and  transient_mark_mode and mark_active:
+        # use a region, if we have one
+        region_start = lisp.region_beginning()
+        region_end = lisp.region_end()
+    elif region_start:
+        # otherwise use the given arguments
+        region_start = min(region_start, region_end)
+        region_end = man(region_start, region_end)
+    else:
+        # as last resort, paste the whole buffer
+        region_start = lisp.point_min_marker()
+        region_end = lisp.point_max_marker()
+
+    code = unicode(lisp.buffer_substring(region_start, region_end))
     filename = lisp.buffer_file_name()
-    new_paste(code, language, filename=filename)
-new_from_buffer.interaction = get_new_from_buffer_args
+
+    lisp.message('Transferring paste to server...')
+    id = lodgeit.new_paste(code, language, filename=filename)
+    paste = lodgeit.get_paste_by_id(id)
+    lisp.message(
+        'New paste with id {0.id} created. Refer to {0.url}'.format(paste))
+    if lisp.paste_kill_url.value():
+        lisp.kill_new(paste.url)
+    if lisp.paste_show_in_browser.value():
+        lisp.browse_url(paste.url)
+new.interaction = lambda: [read_language()]
 
 
 def menu():
@@ -186,7 +180,6 @@ def menu():
          ('Fetch by id', lisp.paste_fetch_by_id),
          ('Insert by id', lisp.paste_insert_by_id),
          '---',
-         ('New from buffer', lisp.paste_new_from_buffer),
-         ('New from region', lisp.paste_new_from_region)
+         ('New...', lisp.paste_new),
          ])
 menu.interaction = ''
