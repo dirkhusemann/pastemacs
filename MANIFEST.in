@@ -1,2 +1,3 @@
 include pastemacs.py
 include setup.py
+include README.rst COPYING
