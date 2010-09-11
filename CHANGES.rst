@@ -1,5 +1,5 @@
-0.2.1 (in development)
-======================
+0.2.1 (Sep 11, 2010)
+====================
 
 - Fixed a NameError
 - ``paste-kill-url`` is on by default now
