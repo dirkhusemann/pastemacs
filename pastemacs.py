@@ -45,7 +45,7 @@ lisp("""
   "Access to the pastebin on paste.pocoo.org"
   :group 'convenience)
 
-(defcustom paste-kill-url nil
+(defcustom paste-kill-url t
   "*If non-nil, put the url of a new paste into kill ring"
   :group 'pastebin
   :type 'boolean)

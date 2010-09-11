@@ -2,6 +2,7 @@
 ======================
 
 - Fixed a NameError
+- ``paste-kill-url`` is on by default now
 
 
 0.2 (Sep 10, 2010)
