@@ -138,7 +138,7 @@ def new(language, region_start=None, region_end=None):
     elif region_start:
         # otherwise use the given arguments
         region_start = min(region_start, region_end)
-        region_end = man(region_start, region_end)
+        region_end = max(region_start, region_end)
     else:
         # as last resort, paste the whole buffer
         region_start = lisp.point_min_marker()
