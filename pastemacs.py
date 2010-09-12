@@ -143,7 +143,7 @@ def new(language, region_start=None, region_end=None):
     paste_id = lodgeit.new_paste(code, language, filename=filename)
     paste = lodgeit.get_paste_by_id(paste_id)
     lisp.message(
-        'New paste with id {0.id} created. Refer to {0.url}'.format(paste))
+        'New paste with ID {0.id} created. Refer to {0.url}'.format(paste))
     if lisp.paste_kill_url.value():
         lisp.kill_new(paste.url)
     if lisp.paste_show_in_browser.value():
