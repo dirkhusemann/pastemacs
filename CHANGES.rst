@@ -1,5 +1,5 @@
-0.3 (in development)
-====================
+0.3 (Sep 12, 2010)
+==================
 
 - Pastes can be retrieved by URL now
 
