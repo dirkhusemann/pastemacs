@@ -11,7 +11,7 @@ with open('README.rst', encoding='utf-8') as stream:
 
 setup(
     name='pastemacs',
-    version='0.2.1',
+    version='0.3',
     url='http://pypi.python.org/pypi/pastemacs/',
     author='Sebastian Wiesner',
     author_email='lunaryorn@googlemail.com',
