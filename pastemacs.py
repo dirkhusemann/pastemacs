@@ -81,39 +81,31 @@ def read_language():
 
 def read_paste_id():
     """
-    Read and return a paste id from the minibuffer.
-
-    A paste id is either an empty string, which stands for the last paste,
-    or a number.
+    Read and return a paste ID or URL from the minibuffer.  An empty input
+    is accepted, and supposed to stand for the last paste.
     """
-    while True:
-        paste_id = lisp.read_no_blanks_input(
-            'A paste id [default: last paste]: ')
-        if not paste_id or paste_id.isdigit():
-            return paste_id
-        else:
-            lisp.error('Please enter a number or '
-                       'leave the minibuffer empty')
+    return lisp.read_no_blanks_input(
+        'A paste ID or URL [default: last paste]: ')
 
 
-def fetch(paste_id=None):
+def fetch(paste_id_or_url=None):
     """
     Fetch a paste and insert its content at point.
 
-    If ``paste_id`` is given, fetch the paste with the given id, otherwise
-    fetch the last paste.
+    If ``paste_id_or_url`` is given, fetch the paste with the given ID or
+    URL, otherwise fetch the last paste.
 
-    When called interactively, prompt for a paste id.  Empty input stands
-    for the last paste, and numeric input for the paste with the given id.
+    When called interactively, prompt for a paste ID or URL.  Empty input
+    stands for the last paste.
     """
-    if paste_id:
-        paste = lodgeit.get_paste_by_id(paste_id)
+    if paste_id_or_url:
+        paste = lodgeit.get_paste_by_id(paste_id_or_url)
     else:
         paste = lodgeit.get_last_paste()
     if paste:
         lisp.insert(paste.code)
     else:
-        lisp.error('There is no paste with id {0}'.format(paste_id))
+        lisp.error('There is no paste {0}'.format(paste_id_or_url))
 fetch.interaction = lambda: [read_paste_id()]
 
 

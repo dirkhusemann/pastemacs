@@ -28,5 +28,5 @@ setup(
         'Topic :: Text Editors :: Emacs'
         ],
     py_modules=['pastemacs'],
-    install_requires=['lodgeitlib'],
+    install_requires=['lodgeitlib>=0.5'],
     )

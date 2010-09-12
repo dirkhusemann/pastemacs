@@ -106,9 +106,9 @@ Retrieving pastes
 To retrieve a paste, use ``paste-fetch``.  It fetches a paste and inserts
 its contents at the point in the current buffer.
 
-The commands prompts for a paste id, allowing either empty input or a
-nummeric paste id.  Empty input stands for the last paste, a nummeric input
-for the paste with the given id.
+The commands prompts for a paste to retrieve.  You can either enter a
+complete paste URL, or just a paste ID.  Empty input is also allowed, and
+stands for the last paste.
 
 
 Configuration

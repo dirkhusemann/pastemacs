@@ -1,6 +1,7 @@
 0.3 (in development)
 ====================
 
+- Pastes can be retrieved by URL now
 
 
 0.2.1 (Sep 11, 2010)
