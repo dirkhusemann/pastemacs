@@ -64,7 +64,7 @@ so if you want some, you have to register them for yourself (e.g. by using
 Take a look at the configuration_, the author of pastemacs uses, if you want
 to see an example.
 
-.. _configuration:  http://github.com/lunaryorn/emacs-site/blob/master/50pasting.el
+.. _configuration: https://github.com/lunaryorn/dotemacsd/blob/master/site-start.d/50pasting.el
 
 
 Creating pastes
