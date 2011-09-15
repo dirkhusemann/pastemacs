@@ -31,7 +31,7 @@
 
 from Pymacs import lisp
 
-from lodgeitlib import lodgeit
+from lodgeitlib import Lodgeit
 
 
 # necessary references
@@ -45,6 +45,11 @@ lisp("""
   "Access to the pastebin on paste.pocoo.org"
   :group 'convenience)
 
+(defcustom paste-pastebin-url "http://paste.pocoo.org"
+  "*If non-nil, the URL of the pastebin server to use"
+  :group 'pastebin
+  :type 'string)
+
 (defcustom paste-kill-url t
   "*If non-nil, put the url of a new paste into kill ring"
   :group 'pastebin
@@ -57,9 +62,16 @@ lisp("""
   :type 'boolean)
 """)
 
+def lodgeIt(): 
+    """create the Lodgeit object for interfacing to the pastebin server"""
+    l = Lodgeit(lisp.paste_pastebin_url.value())
+    return l
 
 def languages():
     """Returns a list of supported languages."""
+
+    lodgeit = lodgeIt()
+
     if not lodgeit.has_languages:
         lisp.message('Fetching list of supported languages from server')
     return lodgeit.languages.keys()
@@ -98,6 +110,9 @@ def fetch(paste_id_or_url=None):
     When called interactively, prompt for a paste ID or URL.  Empty input
     stands for the last paste.
     """
+
+    lodgeit = lodgeIt()
+
     if paste_id_or_url:
         paste = lodgeit.get_paste_by_id(paste_id_or_url)
     else:
@@ -121,6 +136,9 @@ def new(language, region_start=None, region_end=None):
     mark, create a paste with the contents of the region.  Otherwise create
     a paste with the contents of the whole buffer.
     """
+
+    lodgeit = lodgeIt()
+
     mark_active = lisp.mark_active.value()
     transient_mark_mode = lisp.transient_mark_mode.value()
     if lisp.interactive and  transient_mark_mode and mark_active:
