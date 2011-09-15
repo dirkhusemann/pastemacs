@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# allows pasting the current buffer on paste.pocoo.org
+# allows pasting the current buffer on paste.pocoo.org or any user specific lodgeit pastebin
 # Copyright (c) 2007-2010 Sebastian Wiesner <lunaryorn@googlemail.com>
 
 # This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
     =========
 
     This pymacs module provides a handful of function for convenient access
-    to the pastebin at `http://paste.pocoo.org`.
+    to the pastebin at `http://paste.pocoo.org` or a pastebin server of your choice.
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@googlemail.com>
 """
@@ -42,7 +42,7 @@ lisp.require(lisp['browse-url'])
 # customisation group
 lisp("""
 (defgroup pastebin nil
-  "Access to the pastebin on paste.pocoo.org"
+  "Access to the pastebin on paste.pocoo.org or a pastebin server of your choice."
   :group 'convenience)
 
 (defcustom paste-pastebin-url "http://paste.pocoo.org"
