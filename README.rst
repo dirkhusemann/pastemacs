@@ -5,8 +5,8 @@ pastemacs
 http://pypi.python.org/pypi/pastemacs/
 
 **pastemacs** allows to create and retrieve pastes from
-http://paste.pocoo.org directly from Emacs_.  It is available under the
-terms of the `GNU GPL 2`_ (see ``COPYING``).
+http://paste.pocoo.org (or any other lodgeit server) directly from and to Emacs_.  
+It is available under the terms of the `GNU GPL 2`_ (see ``COPYING``).
 
 .. _Emacs: http://www.gnu.org/software/emacs/emacs.html
 .. _`GNU GPL 2`: http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
@@ -27,7 +27,7 @@ tested, Python 3 is *not* supported).  pastemacs itself is available in the
 This installs pastemacs and its dependency lodgeitlib_. Alternatively you
 can just clone the Git_ repository and install manually::
 
-   git clone git://github.com/lunaryorn/pastemacs.git
+   git clone git://github.com/dirkhusemann/pastemacs.git
    cd pastemacs
    python setup.py install
 
@@ -60,12 +60,6 @@ use them either through the menu (if enabled) or by executing them directly
 using ``M-x``.  pastemacs does not register any shortcuts for its commands,
 so if you want some, you have to register them for yourself (e.g. by using
 ``global-set-key``).
-
-Take a look at the configuration_, the author of pastemacs uses, if you want
-to see an example.
-
-.. _configuration: https://github.com/lunaryorn/dotemacsd/blob/master/site-start.d/50pasting.el
-
 
 Creating pastes
 ---------------
@@ -128,5 +122,7 @@ Please provide as much information as possible when reporting issues.
 Feel free to clone the repository, add you own modifications and send a pull
 requests.  Enhancements and new features are always appreciated :)
 
-.. _github: https://github.com/lunaryorn/pastemacs
-.. _`issue tracker`: https://github.com/lunaryorn/pastemacs/issues
+.. _github: https://github.com/dirkhusemann/pastemacs
+.. _`issue tracker`: https://github.com/dirkhusemann/pastemacs/issues
+
+
